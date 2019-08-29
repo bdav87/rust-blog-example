@@ -1,0 +1,11 @@
+[package]
+name = "rust-blog-example"
+version = "0.1.0"
+authors = ["Brian Davenport <bdav87@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+
+[lib]
+name = "blog"
+path = "src/lib.rs"
