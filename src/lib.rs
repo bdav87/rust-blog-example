@@ -11,7 +11,8 @@ impl Post {
         }
     }
     pub fn add_text(&mut self, text: &str) {
-        self.content.push_str(text)
+        let new_text = self.state.as_ref().unwrap().add_text(text);
+        self.content.push_str(new_text)
     }
     pub fn content(&self) -> &str {
         self.state.as_ref().unwrap().content(&self)
@@ -40,7 +41,7 @@ trait State {
         "Draft"
     }
     fn reject(self: Box<Self>) -> Box<dyn State>;
-    fn editable(self: Box<Self>) -> bool;
+    fn add_text<'a>(&self, text: &'a str) -> &'a str;
 }
 
 
@@ -56,8 +57,8 @@ impl State for Draft {
     fn reject(self: Box<Self>) -> Box<dyn State> {
         self
     }
-    fn editable(self: Box<Self>) -> bool {
-        true
+    fn add_text<'a>(&self, text: &'a str) -> &'a str {
+        text
     }
 }
 
@@ -82,8 +83,8 @@ impl State for PendingReview {
     fn content<'a>(&self, post: &'a Post) -> &'a str {
         "Pending Review"
     }
-    fn editable(self: Box<Self>) -> bool {
-        false
+    fn add_text<'a>(&self, text: &'a str) -> &'a str {
+        ""
     }
 }
 
@@ -102,7 +103,7 @@ impl State for Published {
     fn reject(self: Box<Self>) -> Box<dyn State> {
         Box::new(PendingReview { approvals: 0})
     }
-    fn editable(self: Box<Self>) -> bool {
-        false
+    fn add_text<'a>(&self, text: &'a str) -> &'a str {
+        ""
     }
 }
